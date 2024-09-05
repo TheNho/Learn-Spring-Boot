@@ -1,33 +1,16 @@
-// Định nghĩa các bảng của database
-// Entity là nơi định ngĩa các bảng của database
-package com.fukuda.Learn.Spring.Boot3.entity;
+// Định nghĩa request
+// Nơi định nghĩa các request
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+package com.fukuda.Learn.Spring.Boot3.dto.request;
 
 import java.time.LocalDate;
 
-// @Entity dùng để đánh dấu class là một table
-@Entity
-public class User { // Bảng User
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+public class UserCreationRequest {
     private String username;
     private String password;
     private String firstName;
     private String lastName;
     private LocalDate dob;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
