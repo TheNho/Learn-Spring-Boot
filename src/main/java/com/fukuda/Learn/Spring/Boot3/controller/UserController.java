@@ -7,10 +7,12 @@
 
 package com.fukuda.Learn.Spring.Boot3.controller;
 
+import com.fukuda.Learn.Spring.Boot3.dto.request.ApiRespone;
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserCreationRequest;
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserUpdateRequest;
 import com.fukuda.Learn.Spring.Boot3.entity.User;
 import com.fukuda.Learn.Spring.Boot3.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest request){
+    ApiRespone<User> createUser(@RequestBody @Valid  UserCreationRequest request){
         // @RequestBody map data của body vào object request
-        return userService.createUser(request);
+
+        ApiRespone<User> apiRespone = new ApiRespone<>();
+
+        apiRespone.setResult(userService.createUser(request));
+
+        return apiRespone;
     }
 
     @GetMapping

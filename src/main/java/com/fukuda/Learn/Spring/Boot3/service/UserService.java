@@ -7,6 +7,8 @@ package com.fukuda.Learn.Spring.Boot3.service;
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserCreationRequest;
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserUpdateRequest;
 import com.fukuda.Learn.Spring.Boot3.entity.User;
+import com.fukuda.Learn.Spring.Boot3.exception.AppException;
+import com.fukuda.Learn.Spring.Boot3.exception.ErrorCode;
 import com.fukuda.Learn.Spring.Boot3.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class UserService {
     public User createUser(UserCreationRequest request){
         User user = new User();
 
+        if (userRepository.existsByUsername(request.getUsername())){
+            throw  new AppException(ErrorCode.USER_EXISTED);
+        }
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setUsername(request.getUsername());
@@ -36,7 +41,7 @@ public class UserService {
 
     public User getUser(String userID)
     {
-        return userRepository.findById(userID).orElseThrow(()-> new RuntimeException("User not found"));
+        return userRepository.findById(userID).orElseThrow(()-> new RuntimeException("User not found!"));
     }
 
     public User updateUser(String userID, UserUpdateRequest request){
