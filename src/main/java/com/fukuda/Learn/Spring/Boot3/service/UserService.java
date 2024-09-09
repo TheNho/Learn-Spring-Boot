@@ -6,53 +6,51 @@ package com.fukuda.Learn.Spring.Boot3.service;
 
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserCreationRequest;
 import com.fukuda.Learn.Spring.Boot3.dto.request.UserUpdateRequest;
+import com.fukuda.Learn.Spring.Boot3.dto.respone.UserRespone;
 import com.fukuda.Learn.Spring.Boot3.entity.User;
 import com.fukuda.Learn.Spring.Boot3.exception.AppException;
 import com.fukuda.Learn.Spring.Boot3.exception.ErrorCode;
+import com.fukuda.Learn.Spring.Boot3.mapper.UserMapper;
 import com.fukuda.Learn.Spring.Boot3.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
+    UserMapper userMapper;
 
-    public User createUser(UserCreationRequest request){
-        User user = new User();
-
+    public UserRespone createUser(UserCreationRequest request){
         if (userRepository.existsByUsername(request.getUsername())){
             throw  new AppException(ErrorCode.USER_EXISTED);
         }
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setDob(request.getDob());
-
-        return userRepository.save(user);
+        User user = userMapper.toUser(request);
+        return userMapper.toUserRespone(userRepository.save(user));
     }
 
-    public List<User> getUser(){
-        return userRepository.findAll();
+    public List<UserRespone> getUser(){
+        List<UserRespone> listUserRespone = new ArrayList<>();
+        userRepository.findAll().forEach(user -> listUserRespone.add(userMapper.toUserRespone(user)));
+        return listUserRespone ;
     }
 
-    public User getUser(String userID)
-    {
-        return userRepository.findById(userID).orElseThrow(()-> new RuntimeException("User not found!"));
+    public UserRespone getUser(String userID) {
+        return userMapper.toUserRespone(userRepository.findById(userID).
+                orElseThrow(()-> new RuntimeException("User not found!")));
     }
 
-    public User updateUser(String userID, UserUpdateRequest request){
-        User user = getUser(userID);
-
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setPassword(request.getPassword());
-        user.setDob(request.getDob());
-
-        return userRepository.save(user);
+    public UserRespone updateUser(String userID, UserUpdateRequest request){
+        User user = userRepository.findById(userID).
+                orElseThrow(()-> new RuntimeException("User not found!"));
+        userMapper.updateUser(user, request);
+        return userMapper.toUserRespone(userRepository.save(user));
     }
 
     public String deleteUser(String userID){

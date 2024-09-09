@@ -1,4 +1,4 @@
-package com.fukuda.Learn.Spring.Boot3.dto.request;
+package com.fukuda.Learn.Spring.Boot3.dto.respone;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,7 +10,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserUpdateRequest {
+public class UserRespone {
+    String username;
     String password;
     String firstName;
     String lastName;
